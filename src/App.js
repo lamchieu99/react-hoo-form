@@ -4,6 +4,8 @@ import { Modal, Button, FormControl, Checkbox, FormControlLabel, TextField, Menu
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import './App.css'
 
 const useStyles = makeStyles((theme) => ({
@@ -42,6 +44,15 @@ export default function TransitionsModal() {
   const classes = useStyles();
 
   //useForm
+  const schema = yup.object().shape({
+    fullname: yup.string().required("*Fullname is required"),
+    Email: yup.string().email().required("*Email is required"),
+    address: yup.string().required("*Address is required"),
+    gender: yup.string().required("*Gender is required"),
+    level: yup.string().required('Level is required'),
+    date: yup.date().required('Date of Birth is required').max(new Date()),
+
+  })
   const { handleSubmit, control, formState: { errors }, reset } = useForm({
     defaultValues: {
       fullname: '',
@@ -49,9 +60,11 @@ export default function TransitionsModal() {
       level: '',
       date: '',
       gender: '',
-      hobbies: false,
-      address: ''
-    }
+      playFooter: false,
+      address: '',
+      watchTV: false
+    },
+    resolver: yupResolver(schema)
   });
   const onSubmit = (data) => {
 
@@ -100,10 +113,6 @@ export default function TransitionsModal() {
                       <Controller
                         name="fullname"
                         control={control}
-                        defaultValue=""
-                        rules={{
-                          required: "Please enter name.",
-                        }}
                         render={({ field: { onChange, value }, fieldState: { invalid, error } }) => (
                           <TextField value={value} onChange={onChange}
                             label="Full name"
@@ -120,10 +129,6 @@ export default function TransitionsModal() {
                       <Controller
                         name="Email"
                         control={control}
-                        defaultValue=""
-                        rules={{
-                          required: "Please enter email.",
-                        }}
                         render={({ field: { onChange, value }, fieldState: { invalid, error } }) => (
                           <TextField value={value} onChange={onChange}
                             label="Email"
@@ -141,10 +146,6 @@ export default function TransitionsModal() {
                       <Controller
                         name="address"
                         control={control}
-                        defaultValue=""
-                        rules={{
-                          required: "Please enter address.",
-                        }}
                         render={({ field: { onChange, value }, fieldState: { invalid, error } }) => (
                           <TextField value={value} onChange={onChange}
                             label="Address"
@@ -164,10 +165,6 @@ export default function TransitionsModal() {
                         <Controller
                           name="level"
                           control={control}
-                          defaultValue=""
-                          rules={{
-                            required: "Please enter level.",
-                          }}
                           render={({ field: { onChange, value }, fieldState: { invalid } }) => (
                             <Select value={value} onChange={onChange} error={invalid} label="Level" >
                               <MenuItem value="Intern">Intern</MenuItem>
@@ -176,7 +173,7 @@ export default function TransitionsModal() {
                             </Select>
                           )}
                         />
-                        <FormHelperText error>{errors.course?.message}</FormHelperText>
+                        <FormHelperText error>{errors.level?.message}</FormHelperText>
                       </FormControl>
 
                     </Grid>
@@ -186,10 +183,6 @@ export default function TransitionsModal() {
                         <Controller
                           control={control}
                           name="date"
-                          defaultValue=""
-                          rules={{
-                            required: "Please enter birthday.",
-                          }}
                           render={({ field: { onChange, value }, fieldState: { invalid, error } }) => (
                             <TextField
                               id="date"
@@ -216,10 +209,6 @@ export default function TransitionsModal() {
                         <Controller
                           control={control}
                           name="gender"
-                          defaultValue=""
-                          rules={{
-                            required: "Please enter gender.",
-                          }}
                           render={({ field: { onChange, value } }) => (
                             <RadioGroup row value={value} onChange={onChange} >
                               <FormControlLabel
@@ -247,28 +236,27 @@ export default function TransitionsModal() {
                       <FormControl variant="outlined" className={classes.inputField}>
                         <FormLabel>Hobbies</FormLabel>
                         <Controller
-                          name="hobbies"
+                          name="playFooter"
                           control={control}
-                          defaultValue=""
-                          rules={{
-                            required: "Please enter hobbies.",
-                          }}
+                          render={({ field: { onChange, value } }) => (
+                            <FormGroup row >
+                              <FormControlLabel
+                                value="Play football"
+                                control={<Checkbox color="primary" onChange={(e) => { onChange(e.target.checked) }} checked={value} />}
+                                label="Play football"
+                              />
+                            </FormGroup>
+                          )}
+                        />
+                        <Controller
+                          name="watchTV"
+                          control={control}
                           render={({ field: { onChange, value } }) => (
                             <FormGroup row >
                               <FormControlLabel
                                 value="Watch television"
                                 control={<Checkbox color="primary" onChange={(e) => { onChange(e.target.checked) }} checked={value} />}
                                 label="Watch television"
-                              />
-                              <FormControlLabel
-                                value="Play football"
-                                control={<Checkbox color="primary" />}
-                                label="Play football"
-                              />
-                              <FormControlLabel
-                                value="Read newpaper"
-                                control={<Checkbox color="primary" />}
-                                label="Read newpaper"
                               />
                             </FormGroup>
                           )}
